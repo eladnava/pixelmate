@@ -18,7 +18,9 @@ Pixelmate is designed to look and feel like the native OSX Finder for a familiar
 
 4. Launch Pixelmate from Applications or the OSX Spotlight.
 
-5. Explore and manage files on your Pixel's internal SD card like a boss.
+5. Explore and manage files on your Pixel's internal SD card like a boss. Drag files and folders into Pixelmate to upload them to your device, or right click remote files and folders to download them to your computer.
+
+> **Pro tip:** You can even use Pixelmate wirelessly, without having to connect your phone via USB cable! Check out [this guide](http://codetheory.in/android-debug-bridge-adb-wireless-debugging-over-wi-fi/) for detailed instructions, and check out [this app](https://github.com/eladnava/wifidev-android) to avoid having to connect the phone to run `adb tcpip` before going wireless.
 
 ## To Do
 
