@@ -1,8 +1,8 @@
 # Pixelmate
 
-An OSX app built with [Electron](https://electronjs.org/) for managing files on your Google Pixel phone, working around the infamous [Android File Transfer bug](https://www.androidauthority.com/google-pixel-mac-android-file-transfer-problems-743068/) that some Pixel owners experience when transferring files to/from their device.
+A macOS app built with [Electron](https://electronjs.org/) for managing files on your Google Pixel phone, working around the infamous [Android File Transfer bug](https://www.androidauthority.com/google-pixel-mac-android-file-transfer-problems-743068/) that some Pixel owners experience when transferring files to/from their device.
 
-Pixelmate is designed to look and feel like the native OSX Finder for a familiar user experience:
+Pixelmate is designed to look and feel like the native macOS Finder for a familiar user experience:
 
 ![Preview](public/screenshot.png)
 
@@ -12,11 +12,11 @@ Pixelmate is designed to look and feel like the native OSX Finder for a familiar
 
 1. Download the [latest version of Pixelmate](https://github.com/eladnava/pixelmate/releases/latest).
 
-2. Unzip the archive and drag and drop the Pixelmate app into the OSX `Applications` folder.
+2. Unzip the archive and drag and drop the Pixelmate app into the macOS `Applications` folder.
 
 3. Connect your phone via USB cable (if you have just enabled USB Debugging, make sure to allow USB debugging for this computer via a popup dialog displayed on your Pixel).
 
-4. Launch Pixelmate from Applications or the OSX Spotlight.
+4. Launch Pixelmate from Applications or the macOS Spotlight.
 
 5. Explore and manage files on your Pixel's internal SD card like a boss. Drag files and folders into Pixelmate to upload them to your device, or right click remote files and folders to download them to your computer.
 
