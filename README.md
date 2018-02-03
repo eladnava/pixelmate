@@ -22,6 +22,12 @@ Pixelmate is designed to look and feel like the native macOS Finder for a famili
 
 > **Pro tip:** You can even use Pixelmate wirelessly, without having to connect your phone via USB cable! Check out [this guide](http://codetheory.in/android-debug-bridge-adb-wireless-debugging-over-wi-fi/) for detailed instructions, and check out [this app](https://github.com/eladnava/wifidev-android) to avoid having to connect the phone to run `adb tcpip` before going wireless.
 
+## Shortcuts
+
+* `Cmd + ↓` to navigate into a folder
+* `Cmd + ↑` to navigate out of a folder
+* `Cmd + Delete` to delete a file or folder
+
 ## To Do
 
 - [ ] File/folder multi-selection for multi-delete and multi-download
