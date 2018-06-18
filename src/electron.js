@@ -1,6 +1,6 @@
 const url = require('url');
 const path = require('path');
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 
 // Keep a global reference of the window object
 let win;
@@ -9,6 +9,29 @@ let win;
 app.on('ready', function createWindow() {
     // Create the main browser window
     win = new BrowserWindow({ width: 780, height: 585, title: 'Pixelmate', icon: __dirname + '/img/1.ico' });
+
+    // Electron OS X menu bar items
+    const template = [
+        {
+            label: 'Pixelmate',
+            submenu: [
+                {
+                    label: 'All Storage Devices',
+                    accelerator: 'CmdOrCtrl+A',
+                    click() {
+                        win.webContents.send('allStorageDevices');
+                    }
+                },
+                {
+                    label: 'Quit',
+                    role: 'quit'
+                }
+            ]
+        }
+    ];
+
+    // Set window menu bar
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
     // Development or production browser URL based on ENV variable
     const startUrl = process.env.URL || url.format({

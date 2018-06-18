@@ -101,10 +101,16 @@ export default {
             // Return listing name, size in KB, formatted date, and whether it's a folder or not
             return {
                 name: listing.name,
-                folder: listing.isDirectory(),
+                folder: !listing.isFile(),
                 size: listing.isDirectory() ? 0 : Math.round(listing.size / 1000),
                 date: moment(listing.mtime).format('MMM DD, YYYY, hh:MM A')
             };
+        });
+
+        // Remove emulated storage listings
+        listings = listings.filter(function (listing) {
+            // Make sure path is /storage/
+            return path !== '/storage/' || listing.name.indexOf('emulated') === -1;
         });
 
         // Sort listings alphabetically

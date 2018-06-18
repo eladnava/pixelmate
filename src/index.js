@@ -11,6 +11,7 @@ import arrow from './img/arrow.png';
 import folderIcon from './img/folder.png';
 
 const electron = window.require('electron');
+const ipcRenderer = electron.ipcRenderer;
 
 const shell = electron.shell;
 const { remote } = electron;
@@ -28,6 +29,15 @@ class App extends Component {
             selectedIndex: -1,
             sessionId: new Date().toDateString()
         };
+
+        // Listen for 'allStorageDevices' event from IPC main
+        ipcRenderer.on('allStorageDevices', (event, message) => {
+                // Set path to /storage
+                this.setState({ path: ['storage'] });
+
+                // Reload listings
+                this.reloadListings();
+          })
     }
 
     componentDidUpdate() {
