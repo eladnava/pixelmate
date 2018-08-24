@@ -7,7 +7,6 @@ const adb = electron.remote.require('adbkit');
 const moment = electron.remote.require('moment');
 const { spawn } = electron.remote.require('child_process');
 
-
 // Create adb client and reuse it throughout app lifecycle
 let client = adb.createClient({
     bin: pathToAdb()
@@ -200,6 +199,10 @@ export default {
 
 function pathToAdb() {
     // Resolve path to adb binary (bundled with pixelmate)
-	if (window.require('os').platform() === "darwin") return path.join(`${app.getAppPath()}/bin/adb`);
-	else return path.join(require('os').homedir(), "/AppData/Local/Android/Sdk/platform-tools/adb.exe")
+	if (window.require('os').platform() === "darwin") {
+		return path.join(`${app.getAppPath()}/bin/adb`);
+	}
+	else {
+		return path.join(require('os').homedir(), "/AppData/Local/Android/Sdk/platform-tools/adb.exe")
+	}
 }
