@@ -1,7 +1,6 @@
 const url = require('url');
 const path = require('path');
 const { app, BrowserWindow, Menu } = require('electron');
-const fs = require('fs');
 
 // Keep a global reference of the window object
 let win;
@@ -45,7 +44,7 @@ app.on('ready', function createWindow() {
     win.loadURL(startUrl);
 
     // Open the DevTools automatically
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 
     // Emitted when the window is closed
     win.on('closed', () => {
