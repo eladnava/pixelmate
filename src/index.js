@@ -9,6 +9,10 @@ import './index.css';
 import fileIcon from './img/file.png';
 import arrow from './img/arrow.png';
 import folderIcon from './img/folder.png';
+// const fs = require("fs");
+// const fileIcon = fs.readFileSync('./img/')
+
+console.log("platform: " + window.require('os').platform())
 
 const electron = window.require('electron');
 const ipcRenderer = electron.ipcRenderer;
