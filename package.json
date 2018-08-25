@@ -7,14 +7,14 @@
   "homepage": "./",
   "main": "src/electron.js",
   "dependencies": {
-    "adbkit": "^2.11.0",
-    "jquery": "^3.3.1",
-    "moment": "^2.20.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "adbkit": "2.11.0",
+    "jquery": "3.3.1",
+    "moment": "2.20.1",
+    "react": "16.2.0",
+    "react-dom": "16.2.0"
   },
   "scripts": {
-      "start":"electron .",
+    "start":"electron .",
     "darwin": "URL=http://localhost:3000 electron",
     "win32":"set URL=http://localhost:3000 && electron .",
     "server": "react-scripts start",
