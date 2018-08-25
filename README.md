@@ -18,7 +18,7 @@ Pixelmate is designed to look and feel like the native Finder / Explorer for a f
 
 2. Unzip the archive and drag and drop the Pixelmate app into the macOS `Applications` folder.
 
-3. Connect your phone via USB cable (if you have just enabled USB Debugging, make sure to allow USB debugging for this computer via a popup dialog displayed on your Device).
+3. Connect your phone via USB cable (if you have just enabled USB Debugging, make sure to allow USB debugging for this computer via a popup dialog displayed on your device).
 
 4. Launch Pixelmate from Applications or the macOS Spotlight.
 
@@ -30,7 +30,7 @@ Pixelmate is designed to look and feel like the native Finder / Explorer for a f
 
 3. Connect your phone via USB cable (if you have just enabled USB Debugging, make sure to allow USB debugging for this computer via a popup dialog displayed on your Pixel).
 
-**Then**
+**Enjoy**
 
 * Explore and manage files on your Pixel's internal SD card like a boss. Drag files and folders into Pixelmate to upload them to your device, or right click remote files and folders to download them to your computer.
 
