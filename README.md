@@ -1,8 +1,10 @@
 # Pixelmate
 
-A macOS app built with [Electron](https://electronjs.org/) for managing files on your Google Pixel phone, working around the infamous [Android File Transfer bug](https://www.androidauthority.com/google-pixel-mac-android-file-transfer-problems-743068/) that some Pixel owners experience when transferring files to/from their device.
+A macOS and Windows app built with [Electron](https://electronjs.org/) for managing files on your Google Pixel phone, working around the infamous [Android File Transfer bug](https://www.androidauthority.com/google-pixel-mac-android-file-transfer-problems-743068/) that some Pixel owners experience when transferring files to/from their device.
 
-Pixelmate is designed to look and feel like the native macOS Finder for a familiar user experience:
+Pixelmate is designed to look and feel like the native Finder / Explorer for a familiar user experience:
+
+> **Note** Pixelmate is in its early days on Windows, and currently still follows the MacOS appearance, it will be made to look like Windows soon.
 
 ![Preview](public/screenshot.png)
 
@@ -10,28 +12,49 @@ Pixelmate is designed to look and feel like the native macOS Finder for a famili
 
 ## Usage
 
+**On Mac**
+
 1. Download the [latest version of Pixelmate](https://github.com/eladnava/pixelmate/releases/latest).
 
 2. Unzip the archive and drag and drop the Pixelmate app into the macOS `Applications` folder.
 
-3. Connect your phone via USB cable (if you have just enabled USB Debugging, make sure to allow USB debugging for this computer via a popup dialog displayed on your Pixel).
+3. Connect your phone via USB cable (if you have just enabled USB Debugging, make sure to allow USB debugging for this computer via a popup dialog displayed on your Device).
 
 4. Launch Pixelmate from Applications or the macOS Spotlight.
 
-5. Explore and manage files on your Pixel's internal SD card like a boss. Drag files and folders into Pixelmate to upload them to your device, or right click remote files and folders to download them to your computer.
+**On Windows**
+
+1. Download the [latest version of Pixelmate](https://github.com/eladnava/pixelmate/releases/latest).
+
+2. Unzip the archive and place it into a sperate folder in `C:\program files`
+
+3. Connect your phone via USB cable (if you have just enabled USB Debugging, make sure to allow USB debugging for this computer via a popup dialog displayed on your Pixel).
+
+**Then**
+
+* Explore and manage files on your Pixel's internal SD card like a boss. Drag files and folders into Pixelmate to upload them to your device, or right click remote files and folders to download them to your computer.
 
 > **Pro tip:** You can even use Pixelmate wirelessly, without having to connect your phone via USB cable! Check out [this guide](http://codetheory.in/android-debug-bridge-adb-wireless-debugging-over-wi-fi/) for detailed instructions, and check out [this app](https://github.com/eladnava/wifidev-android) to avoid having to connect the phone to run `adb tcpip` before going wireless.
 
 ## Shortcuts
 
+**On Mac**
+
 * `Cmd + ↓` to navigate into a folder
 * `Cmd + ↑` to navigate out of a folder
 * `Cmd + Delete` to delete a file or folder
+
+**On Windows**
+
+* `CTRL + ↓` to navigate into a folder
+* `CTRL + ↑` to navigate out of a folder
+* `CTRL + Delete` to delete a file or folder
 
 ## To Do
 
 - [ ] File/folder multi-selection for multi-delete and multi-download
 - [ ] Drag and dropping of files and folders stored on the device to the local computer (pending resolution of an upstream [Electron GitHub issue](https://github.com/electron/electron/issues/11691))
+- [ ] Automatically change theme depending on platform
 
 ## License
 
