@@ -115,12 +115,12 @@ export default {
         // Sort listings alphabetically
         listings.sort(function (a, b) {
             // Current listing is a folder?
-            if (a.folder && ! b.folder) {
+            if (a.folder && !b.folder) {
                 return -1;
             }
 
             // Comparison is a folder?
-            if (b.folder && ! a.folder) {
+            if (b.folder && !a.folder) {
                 return 1;
             }
 
@@ -198,11 +198,14 @@ export default {
 }
 
 function pathToAdb() {
-    // Resolve path to adb binary (bundled with pixelmate)
-	if (window.require('os').platform() === "darwin") {
-		return path.join(`${app.getAppPath()}/bin/adb`);
-	}
-	else {
-		return path.join(require('os').homedir(), "/AppData/Local/Android/Sdk/platform-tools/adb.exe")
-	}
+    // OS X?
+    if (window.require('os').platform() === "darwin") {
+        // Resolve path to adb binary (bundled with pixelmate)
+        return path.join(`${app.getAppPath()}/bin/adb`);
+    }
+    // Windows?
+    else {
+        // Resolve path to adb.exe binary (not bundled currently)
+        return path.join(require('os').homedir(), "/AppData/Local/Android/Sdk/platform-tools/adb.exe")
+    }
 }
