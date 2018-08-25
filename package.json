@@ -7,11 +7,11 @@
   "homepage": "./",
   "main": "src/electron.js",
   "dependencies": {
-    "adbkit": "2.11.0",
-    "jquery": "3.3.1",
-    "moment": "2.20.1",
-    "react": "16.2.0",
-    "react-dom": "16.2.0"
+    "adbkit": "^2.11.0",
+    "jquery": "^3.3.1",
+    "moment": "^2.20.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
   },
   "scripts": {
     "start":"electron .",
@@ -22,6 +22,6 @@
     "package": "rm -rf dist/* build/* && npm run build && electron-packager . Pixelmate --electron-version=1.7.11 --platform=darwin --arch=x64 --icon=public/app.icns --overwrite && zip -r -y -X dist/Pixelmate.zip Pixelmate-darwin-x64/Pixelmate.app"
   },
   "devDependencies": {
-    "react-scripts": "^1.1.0"
+    "react-scripts": "1.1.0"
   }
 }
