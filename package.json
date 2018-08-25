@@ -14,7 +14,9 @@
     "react-dom": "^16.2.0"
   },
   "scripts": {
-    "app": "URL=http://localhost:3000 electron .",
+    "start":"electron .",
+    "darwin": "URL=http://localhost:3000 electron",
+    "win32":"set URL=http://localhost:3000 && electron .",
     "server": "react-scripts start",
     "build": "react-scripts build",
     "package": "rm -rf dist/* build/* && npm run build && electron-packager . Pixelmate --electron-version=1.7.11 --platform=darwin --arch=x64 --icon=public/app.icns --version=1.0.0 --app-bundle-id=com.pixelmate --app-version=1.0.0 --build-version=1.0.0 --osx-sign --overwrite && zip -r -y -X dist/Pixelmate.zip Pixelmate-darwin-x64/Pixelmate.app"
