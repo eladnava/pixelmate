@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start":"electron .",
-    "darwin": "URL=http://localhost:3000 electron",
+    "darwin": "URL=http://localhost:3000 electron .",
     "win32":"set URL=http://localhost:3000 && electron .",
     "server": "react-scripts start",
     "build": "react-scripts build",
