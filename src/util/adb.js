@@ -5,7 +5,7 @@ const fs = electron.remote.require('fs');
 const path = electron.remote.require('path');
 const adb = electron.remote.require('adbkit');
 const moment = electron.remote.require('moment');
-const { spawn } = electron.remote.require('child_process');
+const spawn = electron.remote.require('child_process').spawn;
 
 // Create adb client and reuse it throughout app lifecycle
 let client = adb.createClient({
