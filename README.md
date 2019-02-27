@@ -2,7 +2,7 @@
 
 A macOS and Windows app built with [Electron](https://electronjs.org/) for managing files on your Google Pixel phone, working around the infamous [Android File Transfer bug](https://www.androidauthority.com/google-pixel-mac-android-file-transfer-problems-743068/) that some Pixel owners experience when transferring files to/from their device.
 
-Pixelmate is designed to look and feel like the native Finder / Explorer for a familiar user experience:
+Pixelmate is designed to look and feel like the native OS X Finder for a familiar user experience:
 
 ![Preview](public/screenshot.png)
 
