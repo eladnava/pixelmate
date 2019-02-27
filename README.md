@@ -4,8 +4,6 @@ A macOS and Windows app built with [Electron](https://electronjs.org/) for manag
 
 Pixelmate is designed to look and feel like the native Finder / Explorer for a familiar user experience:
 
-> **Note** Pixelmate is in its early days on Windows, and currently still follows the MacOS appearance, it will be made to look like Windows soon.
-
 ![Preview](public/screenshot.png)
 
 > **Note:** Pixelmate uses [ADB](https://developer.android.com/studio/command-line/adb.html) behind the scenes, requiring you to enable Developer Mode and USB Debugging on your phone. Check out [this guide](https://www.howtogeek.com/129728/how-to-access-the-developer-options-menu-and-enable-usb-debugging-on-android-4.2/) for detailed instructions.
@@ -45,7 +43,8 @@ Pixelmate is designed to look and feel like the native Finder / Explorer for a f
 * `Cmd + Delete` to delete a file or folder
 * `Cmd + Shift + ↑/↓` to multi-select listings
 
-**On Windows**
+**On 
+**
 
 * `Ctrl + ↓` to navigate into a folder
 * `Ctrl + ↑` to navigate out of a folder
@@ -56,7 +55,6 @@ Pixelmate is designed to look and feel like the native Finder / Explorer for a f
 
 - [x] File/folder multi-selection for multi-delete and multi-download
 - [ ] Drag and dropping of files and folders stored on the device to the local computer (pending resolution of an upstream [Electron GitHub issue](https://github.com/electron/electron/issues/11691))
-- [ ] Automatically change theme depending on platform
 
 ## License
 
