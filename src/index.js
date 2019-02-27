@@ -129,6 +129,38 @@ class App extends Component {
 
         // Listen for window keydown event
         $(window).keydown((e) => {
+            // Enter?
+            if (e.keyCode === 13) {
+                // Valid selection?
+                if (this.isSelectionValid()) {
+                    // Already editing?
+                    if (this.isEditing()) {
+                        // Save edits
+                        return this.saveEdits();
+                    }
+
+                    // Set editing flag
+                    this.state.listings[this.state.selectedIndex].editing = true;
+
+                    // Update listings list
+                    this.setState({ listings: this.state.listings });
+                }
+            }
+
+            // Escape?
+            if (e.keyCode === 27) {
+                // Editing?
+                if (this.isEditing()) {
+                    // Stop
+                    this.stopEditing();
+                }
+            }
+
+            // Ignore the following hotkeys if currently editing
+            if (this.isEditing()) {
+                return;
+            }
+
             // Arrow up?
             if (e.keyCode === 38) {
                 // Command pressed?
@@ -178,21 +210,18 @@ class App extends Component {
 
             // Command + Shift + N?
             if (e.metaKey && e.shiftKey && e.keyCode === 'N'.charCodeAt(0)) {
-                // Not currently editing another listing?
-                if (!this.isEditing()) {
-                    // Create a new 'fake' folder
-                    this.state.listings.push({
-                        name: '',
-                        size: 0,
-                        date: '',
-                        new: true,
-                        editing: true,
-                        folder: true
-                    });
+                // Create a new 'fake' folder
+                this.state.listings.push({
+                    name: '',
+                    size: 0,
+                    date: '',
+                    new: true,
+                    editing: true,
+                    folder: true
+                });
 
-                    // Update listings list and set selected listing to new fake folder
-                    this.setState({ listings: this.state.listings, selectedIndex: this.state.listings.length - 1 });
-                }
+                // Update listings list and set selected listing to new fake folder
+                this.setState({ listings: this.state.listings, selectedIndex: this.state.listings.length - 1 });
             }
 
             // Command + Option + I?
@@ -213,46 +242,16 @@ class App extends Component {
                 }
             }
 
-            // Enter?
-            if (e.keyCode === 13) {
-                // Valid selection?
-                if (this.isSelectionValid()) {
-                    // Already editing?
-                    if (this.isEditing()) {
-                        // Save edits
-                        return this.saveEdits();
-                    }
+            // Traverse listings
+            for (var idx in this.state.listings) {
+                // Get current listing
+                var listing = this.state.listings[idx];
 
-                    // Set editing flag
-                    this.state.listings[this.state.selectedIndex].editing = true;
-
-                    // Update listings list
-                    this.setState({ listings: this.state.listings });
-                }
-            }
-
-            // Escape?
-            if (e.keyCode === 27) {
-                // Editing?
-                if (this.isEditing()) {
-                    // Stop
-                    this.stopEditing();
-                }
-            }
-
-            // Not editing?
-            if (!this.isEditing()) {
-                // Traverse listings
-                for (var idx in this.state.listings) {
-                    // Get current listing
-                    var listing = this.state.listings[idx];
-
-                    // Attempt to find the first listing with this char code
-                    if (listing.name.length > 0 && listing.name.toUpperCase().charCodeAt(0) === e.keyCode) {
-                        // Select first match
-                        this.setState({ selectedIndex: parseInt(idx, 10) });
-                        return;
-                    }
+                // Attempt to find the first listing with this char code
+                if (listing.name.length > 0 && listing.name.toUpperCase().charCodeAt(0) === e.keyCode) {
+                    // Select first match
+                    this.setState({ selectedIndex: parseInt(idx, 10) });
+                    return;
                 }
             }
         });
