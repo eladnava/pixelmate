@@ -26,18 +26,18 @@ class App extends Component {
             listings: [],
             path: ['sdcard'],
             status: 'Ready',
-            selectedIndex: -1,
+            selectedIndexes: [],
             sessionId: new Date().toDateString()
         };
 
         // Listen for 'allStorageDevices' event from IPC main
         ipcRenderer.on('allStorageDevices', (event, message) => {
-                // Set path to /storage
-                this.setState({ path: ['storage'] });
+            // Set path to /storage
+            this.setState({ path: ['storage'] });
 
-                // Reload listings
-                this.reloadListings();
-          })
+            // Reload listings
+            this.reloadListings();
+        })
     }
 
     componentDidUpdate() {
@@ -139,8 +139,13 @@ class App extends Component {
                         return this.saveEdits();
                     }
 
+                    // Must have just one selection to edit
+                    if (this.state.selectedIndexes.length !== 1) {
+                        return;
+                    }
+
                     // Set editing flag
-                    this.state.listings[this.state.selectedIndex].editing = true;
+                    this.state.listings[this.state.selectedIndexes[0]].editing = true;
 
                     // Update listings list
                     this.setState({ listings: this.state.listings });
@@ -169,16 +174,46 @@ class App extends Component {
                     return this.back();
                 }
 
+                // Multiselect?
+                if (e.shiftKey) {
+                    // Already have one selection?
+                    if (this.state.selectedIndexes.length > 0) {
+                        // Calculate next index to select/unselect
+                        let prevSelectionIdx = this.state.lastSelectedIndex - 1;
+
+                        // Valid idx?
+                        if (prevSelectionIdx > 0) {
+                            // Is it already selected tho?
+                            var checkAlreadySelected = this.state.selectedIndexes.indexOf(prevSelectionIdx);
+
+                            // Unselect last selection if so
+                            if (checkAlreadySelected !== -1) {
+                                this.state.selectedindexes = this.state.selectedIndexes.splice(checkAlreadySelected + 1, 1);
+                            }
+                            else {
+                                // Push index
+                                this.state.selectedIndexes.push(prevSelectionIdx);
+                            }
+
+                            // Update UI
+                            this.setSelectedIndexes(this.state.selectedIndexes, prevSelectionIdx);
+                        }
+                    }
+
+                    // No further processing
+                    return;
+                }
+
                 // Can we scroll up?
-                if (this.state.selectedIndex > 0) {
+                if (this.state.selectedIndexes.length > 0 && this.state.selectedIndexes[0] > 0) {
                     // Select listing above
-                    return this.setState({ selectedIndex: --this.state.selectedIndex });
+                    return this.setSelectedIndexes([--this.state.selectedIndexes[0]]);
                 }
 
                 // No selection?
-                if (this.state.selectedIndex === -1) {
+                if (this.state.selectedIndexes.length === 0) {
                     // Select last listing
-                    return this.setState({ selectedIndex: this.state.listings.length - 1 });
+                    return this.setSelectedIndexes([this.state.listings.length - 1]);
                 }
             }
 
@@ -189,10 +224,44 @@ class App extends Component {
                     return this.enterOrDownloadSelection();
                 }
 
+                // Multiselect?
+                if (e.shiftKey) {
+                    // Already have one selection?
+                    if (this.state.selectedIndexes.length > 0) {
+                        // Calculate next index to select
+                        let nextSelectionIdx = this.state.lastSelectedIndex + 1;
+
+                        // Valid idx?
+                        if (nextSelectionIdx < this.state.listings.length) {
+                            // Is it already selected tho?
+                            var checkAlreadySelected = this.state.selectedIndexes.indexOf(nextSelectionIdx);
+
+                            // Unselect if so
+                            if (checkAlreadySelected !== -1) {
+                                this.state.selectedindexes = this.state.selectedIndexes.splice(checkAlreadySelected - 1, 1);
+                            }
+                            else {
+                                // Push index
+                                this.state.selectedIndexes.push(nextSelectionIdx);
+                            }
+
+                            // Update UI
+                            this.setSelectedIndexes(this.state.selectedIndexes, nextSelectionIdx);
+                        }
+                    }
+
+                    // No further processing
+                    return;
+                }
+
                 // Can we scroll down?
-                if (this.state.selectedIndex < this.state.listings.length - 1) {
+                if (this.state.selectedIndexes.length > 0 && this.state.selectedIndexes[0] < this.state.listings.length - 1) {
                     // Select listing below
-                    return this.setState({ selectedIndex: ++this.state.selectedIndex });
+                    return this.setSelectedIndexes([++this.state.selectedIndexes[0]]);
+                }
+                else if (this.state.selectedIndexes.length === 0 && this.state.listings.length > 0) {
+                    // Select first listing
+                    return this.setSelectedIndexes([0]);
                 }
             }
 
@@ -221,7 +290,7 @@ class App extends Component {
                 });
 
                 // Update listings list and set selected listing to new fake folder
-                this.setState({ listings: this.state.listings, selectedIndex: this.state.listings.length - 1 });
+                this.setState({ listings: this.state.listings, selectedIndexes: [this.state.listings.length - 1] });
             }
 
             // Command + Option + I?
@@ -250,7 +319,7 @@ class App extends Component {
                 // Attempt to find the first listing with this char code
                 if (listing.name.length > 0 && listing.name.toUpperCase().charCodeAt(0) === e.keyCode) {
                     // Select first match
-                    this.setState({ selectedIndex: parseInt(idx, 10) });
+                    this.setSelectedIndexes([idx]);
                     return;
                 }
             }
@@ -284,12 +353,12 @@ class App extends Component {
 
     isSelectionValid() {
         // Check whether selection is a valid element in the listings array
-        return this.state.selectedIndex > -1 && this.state.selectedIndex < this.state.listings.length;
+        return this.state.selectedIndexes.length === 1 && this.state.selectedIndexes[0] < this.state.listings.length;
     }
 
     getSelectedListing() {
         // Return listing by index
-        return this.state.listings[this.state.selectedIndex];
+        return this.state.listings[this.state.selectedIndexes[0]];
     }
 
     getEditedListing() {
@@ -444,7 +513,7 @@ class App extends Component {
         // Valid selection?
         if (this.isSelectionValid()) {
             // Get selected listing
-            let listing = this.state.listings[this.state.selectedIndex];
+            let listing = this.state.listings[this.state.selectedIndexes[0]];
 
             // Folder?
             if (listing.folder) {
@@ -554,7 +623,7 @@ class App extends Component {
 
     async reloadListings() {
         // Loading indicator
-        this.setState({ loading: true, listings: [], selectedIndex: -1, status: 'Loading...' });
+        this.setState({ loading: true, listings: [], selectedIndexes: [], status: 'Loading...' });
 
         // Prepare listings array
         let listings;
@@ -584,7 +653,7 @@ class App extends Component {
             <div className="listing-container">
                 <table className="listings">
                     <tbody>
-                        <tr onMouseDown={() => this.selectListingByIndex(-1)}>
+                        <tr onMouseDown={() => this.setSelectedIndexes([])}>
                             <th width="60%">Name</th>
                             <th>Date Modified</th>
                             <th>Size</th>
@@ -599,6 +668,46 @@ class App extends Component {
         );
     }
 
+    multiSelectListings(e, targetIdx) {
+        // Multiselect?
+        if (e.shiftKey) {
+            // Make sure we have selected something first
+            if (this.state.selectedIndexes.length === 0) {
+                return;
+            }
+
+            // Get first & last selections
+            var firstSelectionIdx = this.state.selectedIndexes[0];
+            var lastSelectedIdx = this.state.selectedIndexes[this.state.selectedIndexes.length - 1];
+
+            // Target is lower than first index?
+            if (targetIdx < firstSelectionIdx) {
+                // Select all listings in between
+                for (var i = targetIdx; i < firstSelectionIdx; i++) {
+                    // Add them
+                    this.state.selectedIndexes.push(i);
+
+                    // Update UI
+                    this.setSelectedIndexes(this.state.selectedIndexes, targetIdx);
+                }
+            }
+            else {
+                // Select all listings in between
+                for (var i = targetIdx; i > lastSelectedIdx; i--) {
+                    // Add them
+                    this.state.selectedIndexes.push(i);
+
+                    // Update UI
+                    this.setSelectedIndexes(this.state.selectedIndexes, targetIdx);
+                }
+            }
+        }
+        else {
+            // Select one
+            this.setSelectedIndexes([targetIdx]);
+        }
+    }
+
     renderListings() {
         // Listings HTML elements array
         let listings = [];
@@ -610,7 +719,7 @@ class App extends Component {
 
             // Build <tr> for this listing
             listings.push(
-                <tr className={parseInt(idx, 10) === this.state.selectedIndex ? 'listing selected' : 'listing'} key={listing.name} name={listing.name} onMouseDown={() => this.selectListingByIndex(idx)} onDoubleClick={() => this.enterOrDownloadSelection()}>
+                <tr className={this.state.selectedIndexes.indexOf(parseInt(idx, 10)) !== -1 ? 'listing selected' : 'listing'} key={listing.name} name={listing.name} onMouseDown={(e) => this.multiSelectListings(e, idx)} onDoubleClick={() => this.enterOrDownloadSelection()}>
                     <td>
                         {listing.folder && <img src={arrow} height="11" className="arrow" alt="arrow" />}
                         {listing.folder && <img src={folderIcon} width="17" className="folder" alt="folder" />}
@@ -639,7 +748,7 @@ class App extends Component {
             for (let i = listings.length; i < minListings; i++) {
                 // Add empty listing <tr> item
                 listings.push(
-                    <tr className='listing' key={i} onMouseDown={() => this.selectListingByIndex(-1)}>
+                    <tr className='listing' key={i} onMouseDown={() => this.setSelectedIndexes([])}>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -652,9 +761,24 @@ class App extends Component {
         return listings;
     }
 
-    selectListingByIndex(idx) {
+    setSelectedIndexes(idxs, lastSelectedIdx) {
+        // Convert to integers
+        for (var i = 0; i < idxs.length; i++) {
+            idxs[i] = parseInt(idxs[i], 10);
+        }
+
+        // Order indexes ASC
+        idxs.sort(function sortNumber(a, b) {
+            return a - b;
+        });
+
+        // Remove duplicates
+        idxs = idxs.filter(function (item, pos) {
+            return idxs.indexOf(item) == pos;
+        })
+
         // Update state with new selected index
-        this.setState({ selectedIndex: parseInt(idx, 10) });
+        this.setState({ selectedIndexes: idxs, lastSelectedIndex: lastSelectedIdx || idxs[0] || -1 });
     }
 
     enterOrDownloadSelection() {
