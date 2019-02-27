@@ -43,16 +43,18 @@ Pixelmate is designed to look and feel like the native Finder / Explorer for a f
 * `Cmd + ↓` to navigate into a folder
 * `Cmd + ↑` to navigate out of a folder
 * `Cmd + Delete` to delete a file or folder
+* `Cmd + Shift + ↑/↓` to multi-select listings
 
 **On Windows**
 
-* `CTRL + ↓` to navigate into a folder
-* `CTRL + ↑` to navigate out of a folder
-* `CTRL + Delete` to delete a file or folder
+* `Ctrl + ↓` to navigate into a folder
+* `Ctrl + ↑` to navigate out of a folder
+* `Ctrl + Del` to delete a file or folder
+* `Ctrl + Shift + ↑/↓` to multi-select listings
 
 ## To Do
 
-- [ ] File/folder multi-selection for multi-delete and multi-download
+- [x] File/folder multi-selection for multi-delete and multi-download
 - [ ] Drag and dropping of files and folders stored on the device to the local computer (pending resolution of an upstream [Electron GitHub issue](https://github.com/electron/electron/issues/11691))
 - [ ] Automatically change theme depending on platform
 

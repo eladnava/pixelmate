@@ -53,10 +53,10 @@ class App extends Component {
         const contextMenu = new Menu();
 
         // Add listing context menus
-        contextMenu.append(new MenuItem({ label: 'Get Size', click: this.getSelectedListingSize.bind(this) }));
-        contextMenu.append(new MenuItem({ label: 'Download', click: this.downloadSelectedListing.bind(this) }));
+        contextMenu.append(new MenuItem({ label: 'Get Size', click: this.getSelectedListingsSizes.bind(this) }));
+        contextMenu.append(new MenuItem({ label: 'Download', click: this.downloadSelectedListings.bind(this) }));
         contextMenu.append(new MenuItem({ type: 'separator' }));
-        contextMenu.append(new MenuItem({ label: 'Delete', click: this.deleteSelectedListing.bind(this) }));
+        contextMenu.append(new MenuItem({ label: 'Delete', click: this.deleteSelectedListings.bind(this) }));
 
         // Prepare generic context menu
         const contextMenuNoSelection = new Menu();
@@ -72,7 +72,7 @@ class App extends Component {
             event.preventDefault();
 
             // Display relevant context menu based on valid listing selection
-            this.isSelectionValid() ? contextMenu.popup(remote.getCurrentWindow(), { async: true }) : contextMenuNoSelection.popup(remote.getCurrentWindow(), { async: true });
+            this.isMultiSelectionValid() ? contextMenu.popup(remote.getCurrentWindow(), { async: true }) : contextMenuNoSelection.popup(remote.getCurrentWindow(), { async: true });
         });
 
         // Prevent default browser action for dragover event
@@ -132,7 +132,7 @@ class App extends Component {
             // Enter?
             if (e.keyCode === 13) {
                 // Valid selection?
-                if (this.isSelectionValid()) {
+                if (this.isSingleSelectionValid()) {
                     // Already editing?
                     if (this.isEditing()) {
                         // Save edits
@@ -184,7 +184,7 @@ class App extends Component {
                         // Valid idx?
                         if (prevSelectionIdx >= 0) {
                             // Is it already selected tho?
-                            var checkAlreadySelected = this.state.selectedIndexes.indexOf(prevSelectionIdx);
+                            let checkAlreadySelected = this.state.selectedIndexes.indexOf(prevSelectionIdx);
 
                             // Unselect last selection if so
                             if (checkAlreadySelected !== -1) {
@@ -242,7 +242,7 @@ class App extends Component {
                         // Valid idx?
                         if (nextSelectionIdx < this.state.listings.length) {
                             // Is it already selected tho?
-                            var checkAlreadySelected = this.state.selectedIndexes.indexOf(nextSelectionIdx);
+                            let checkAlreadySelected = this.state.selectedIndexes.indexOf(nextSelectionIdx);
 
                             // Unselect if so
                             if (checkAlreadySelected !== -1) {
@@ -278,7 +278,7 @@ class App extends Component {
                 // Command pressed?
                 if (e.metaKey) {
                     // Delete it
-                    return this.deleteSelectedListing();
+                    return this.deleteSelectedListings();
                 }
 
                 // Go back
@@ -320,9 +320,9 @@ class App extends Component {
             }
 
             // Traverse listings
-            for (var idx in this.state.listings) {
+            for (let idx in this.state.listings) {
                 // Get current listing
-                var listing = this.state.listings[idx];
+                let listing = this.state.listings[idx];
 
                 // Attempt to find the first listing with this char code
                 if (listing.name.length > 0 && listing.name.toUpperCase().charCodeAt(0) === e.keyCode) {
@@ -359,9 +359,14 @@ class App extends Component {
         this.setState({ listings: this.state.listings });
     }
 
-    isSelectionValid() {
+    isSingleSelectionValid() {
         // Check whether selection is a valid element in the listings array
         return this.state.selectedIndexes.length === 1 && this.state.selectedIndexes[0] < this.state.listings.length;
+    }
+
+    isMultiSelectionValid() {
+        // Check whether selection is valid
+        return this.state.selectedIndexes.length > 0 && this.state.selectedIndexes[0] < this.state.listings.length && this.state.selectedIndexes[this.state.selectedIndexes.length - 1] < this.state.listings.length;
     }
 
     getSelectedListing() {
@@ -388,43 +393,58 @@ class App extends Component {
         return this.getEditedListing() != null;
     }
 
-    async deleteSelectedListing() {
-        // Valid selection?
-        if (this.isSelectionValid()) {
-            // Get selected listing object
-            let listing = this.getSelectedListing();
+    async deleteSelectedListings() {
+        // Valid selection(s)?
+        if (this.isMultiSelectionValid()) {
+            // Traverse selection(s)
+            for (let idx of this.state.selectedIndexes) {
+                // Get selected listing
+                let listing = this.state.listings[idx];
 
-            // Build remote path to it
-            let listingPath = `/${this.state.path.join('/')}/${listing.name}`;
+                // Build remote path to it
+                let listingPath = `/${this.state.path.join('/')}/${listing.name}`;
 
-            // Is it a folder?
-            if (listing.folder) {
-                // Append trailing slash
-                listingPath += '/';
+                // Is it a folder?
+                if (listing.folder) {
+                    // Append trailing slash
+                    listingPath += '/';
+                }
+
+                // Confirm with user
+                if (!window.confirm(`Are you sure you want to delete:\n${listingPath}`)) {
+                    return;
+                }
+
+                try {
+                    // Attempt to delete the listing
+                    await adb.rm(listingPath, this.onCommandOutput.bind(this));
+                }
+                catch (err) {
+                    // Display error
+                    return alert(err.message);
+                }
+
+                // Mark as deleted
+                listing.deleted = true;
             }
 
-            // Confirm with user
-            if (!window.confirm(`Are you sure you want to delete:\n${listingPath}`)) {
-                return;
-            }
+            // Traverse selection(s) to remove deleted ones
+            for (let listingIdx = 0; listingIdx < this.state.listings.length; listingIdx++) {
+                // Current listing deleted?
+                if (this.state.listings[listingIdx].deleted) {
+                    // Remove listing from array
+                    this.state.listings.splice(listingIdx, 1);
 
-            try {
-                // Attempt to delete the listing
-                await adb.rm(listingPath, this.onCommandOutput.bind(this));
+                    // Decrement and keep checking
+                    listingIdx--;
+                }
             }
-            catch (err) {
-                // Display error
-                return alert(err.message);
-            }
-
-            // Find listing's index in the listings list
-            let idx = this.state.listings.indexOf(listing);
-
-            // Remove listing from array
-            this.state.listings.splice(idx, 1);
 
             // Update status message and listings list
-            this.setState({ status: listing.folder ? 'Folder deleted' : 'File deleted', listings: this.state.listings });
+            this.setState({ status: 'Listings deleted', listings: this.state.listings });
+
+            // Reset selection
+            this.setSelectedIndexes([]);
         }
     }
 
@@ -433,7 +453,7 @@ class App extends Component {
         this.setState({ status: 'Calculating...' });
 
         // Traverse listings
-        for (var listing of this.state.listings) {
+        for (let listing of this.state.listings) {
             // Is it a folder?
             if (listing.folder) {
                 // Calculate its size
@@ -445,25 +465,28 @@ class App extends Component {
         this.setState({ status: 'Done', listings: this.state.listings });
     }
 
-    async getSelectedListingSize() {
-        // Valid selection?
-        if (this.isSelectionValid()) {
-            // Get selected listing
-            let listing = this.getSelectedListing();
+    async getSelectedListingsSizes() {
+        // Valid selection(s)?
+        if (this.isMultiSelectionValid()) {
+            // Traverse selection(s)
+            for (let idx of this.state.selectedIndexes) {
+                // Get selected listing
+                let listing = this.state.listings[idx];
 
-            // Build remote path to selected listing
-            let remotePath = `/${this.state.path.join('/')}/${listing.name}`;
+                // Build remote path to selected listing
+                let remotePath = `/${this.state.path.join('/')}/${listing.name}`;
 
-            // Update status message
-            this.setState({ status: `Calculating size of ${listing.name}...` });
+                // Update status message
+                this.setState({ status: `Calculating size of ${listing.name}...` });
 
-            try {
-                // Calculate listing size
-                listing.size = await adb.du(remotePath, this.onCommandOutput.bind(this));
-            }
-            catch (err) {
-                // Display error
-                return alert(err.message);
+                try {
+                    // Calculate listing size
+                    listing.size = await adb.du(remotePath, this.onCommandOutput.bind(this));
+                }
+                catch (err) {
+                    // Display error
+                    return alert(err.message);
+                }
             }
 
             // Update status message and listings list
@@ -471,43 +494,46 @@ class App extends Component {
         }
     }
 
-    async downloadSelectedListing(options) {
-        // Valid selection?
-        if (this.isSelectionValid()) {
-            // Get selected listing
-            let listing = this.getSelectedListing();
+    async downloadSelectedListings(options) {
+        // Valid selection(s)?
+        if (this.isMultiSelectionValid()) {
+            // Traverse selection(s)
+            for (let idx of this.state.selectedIndexes) {
+                // Get current listing
+                let listing = this.state.listings[idx];
 
-            // Build path to remote listing
-            let remotePath = `/${this.state.path.join('/')}/${listing.name}`;
+                // Build path to remote listing
+                let remotePath = `/${this.state.path.join('/')}/${listing.name}`;
 
-            // Build target download local path
-            let localPath = `${app.getPath('downloads')}/Pixelmate/${this.state.sessionId}/${listing.name}`;
+                // Build target download local path
+                let localPath = `${app.getPath('downloads')}/Pixelmate/${this.state.sessionId}/${listing.name}`;
 
-            // If listing is a folder, append a trailing slash
-            if (listing.folder) {
-                localPath += '/';
-            }
+                // If listing is a folder, append a trailing slash
+                if (listing.folder) {
+                    localPath += '/';
+                }
 
-            // Update status message
-            this.setState({ status: `Downloading ${remotePath}` });
+                // Update status message
+                this.setState({ status: `Downloading ${remotePath}` });
 
-            try {
-                // Pull the listing
-                await adb.pull(remotePath, localPath, this.onCommandOutput.bind(this));
-            }
-            catch (err) {
-                // Display error
-                return alert(err.message);
-            }
+                try {
+                    // Pull the listing
+                    await adb.pull(remotePath, localPath, this.onCommandOutput.bind(this));
+                }
+                catch (err) {
+                    // Display error
+                    return alert(err.message);
+                }
 
-            // Open the listing after downloading?
-            if (options.open) {
-                // Use default OSX handler to open the listing
-                shell.openItem(localPath);
-            }
-            else {
-                // Show the item in its download location instead
-                shell.showItemInFolder(localPath);
+                // Open the listing after downloading?
+                if (options.open) {
+                    // Use default OSX handler to open the listing
+                    shell.openItem(localPath);
+                }
+                else {
+                    // Show the item in its download location instead
+                    shell.showItemInFolder(localPath);
+                }
             }
         }
     }
@@ -519,7 +545,7 @@ class App extends Component {
 
     navigateIn() {
         // Valid selection?
-        if (this.isSelectionValid()) {
+        if (this.isSingleSelectionValid()) {
             // Get selected listing
             let listing = this.state.listings[this.state.selectedIndexes[0]];
 
@@ -626,7 +652,7 @@ class App extends Component {
         listing.editing = false;
 
         // Update status message and listings list
-        this.setState({ status: 'Folder created', listings: this.state.listings });
+        this.setState({ status: 'Folder created', listings: this.state.listings, lastSelectedIndex: this.state.listings.length - 1 });
     }
 
     async reloadListings() {
@@ -677,6 +703,11 @@ class App extends Component {
     }
 
     multiSelectListings(e, targetIdx) {
+        // Ignore right clicks
+        if (e.nativeEvent.which === 3) {
+            return;
+        }
+
         // Clean input
         targetIdx = parseInt(targetIdx, 10);
 
@@ -688,13 +719,13 @@ class App extends Component {
             }
 
             // Get first & last selections
-            var firstSelectionIdx = this.state.selectedIndexes[0];
-            var lastSelectedIdx = this.state.selectedIndexes[this.state.selectedIndexes.length - 1];
+            let firstSelectionIdx = this.state.selectedIndexes[0];
+            let lastSelectedIdx = this.state.selectedIndexes[this.state.selectedIndexes.length - 1];
 
             // Target is lower than first index?
             if (targetIdx < firstSelectionIdx) {
                 // Select all listings in between
-                for (var i = targetIdx; i < firstSelectionIdx; i++) {
+                for (let i = targetIdx; i < firstSelectionIdx; i++) {
                     // Add them
                     this.state.selectedIndexes.push(i);
 
@@ -704,7 +735,7 @@ class App extends Component {
             }
             else {
                 // Select all listings in between
-                for (var i = targetIdx; i > lastSelectedIdx; i--) {
+                for (let i = targetIdx; i > lastSelectedIdx; i--) {
                     // Add them
                     this.state.selectedIndexes.push(i);
 
@@ -774,7 +805,7 @@ class App extends Component {
 
     setSelectedIndexes(idxs, lastSelectedIdx) {
         // Convert to integers
-        for (var i = 0; i < idxs.length; i++) {
+        for (let i = 0; i < idxs.length; i++) {
             idxs[i] = parseInt(idxs[i], 10);
         }
 
@@ -799,7 +830,7 @@ class App extends Component {
 
     enterOrDownloadSelection() {
         // Make sure selection is valid
-        if (this.isSelectionValid()) {
+        if (this.isSingleSelectionValid()) {
             // Fetch selected listing
             let listing = this.getSelectedListing();
 
@@ -810,7 +841,7 @@ class App extends Component {
             }
             else {
                 // Attempt to download and open the listing
-                this.downloadSelectedListing({ open: true });
+                this.downloadSelectedListings({ open: true });
             }
         }
     }
