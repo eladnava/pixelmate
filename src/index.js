@@ -182,7 +182,7 @@ class App extends Component {
                         let prevSelectionIdx = this.state.lastSelectedIndex - 1;
 
                         // Valid idx?
-                        if (prevSelectionIdx > 0) {
+                        if (prevSelectionIdx >= 0) {
                             // Is it already selected tho?
                             var checkAlreadySelected = this.state.selectedIndexes.indexOf(prevSelectionIdx);
 
@@ -205,9 +205,17 @@ class App extends Component {
                 }
 
                 // Can we scroll up?
-                if (this.state.selectedIndexes.length > 0 && this.state.selectedIndexes[0] > 0) {
+                if (this.state.selectedIndexes.length > 0 && this.state.selectedIndexes[0] >= 0) {
+                    // Calcuate new index
+                    let newIdx = --this.state.lastSelectedIndex;
+
+                    // Fallback to first listing
+                    if (newIdx === -1) {
+                        newIdx = 0;
+                    }
+
                     // Select listing above
-                    return this.setSelectedIndexes([--this.state.selectedIndexes[0]]);
+                    return this.setSelectedIndexes([newIdx]);
                 }
 
                 // No selection?
@@ -257,7 +265,7 @@ class App extends Component {
                 // Can we scroll down?
                 if (this.state.selectedIndexes.length > 0 && this.state.selectedIndexes[0] < this.state.listings.length - 1) {
                     // Select listing below
-                    return this.setSelectedIndexes([++this.state.selectedIndexes[0]]);
+                    return this.setSelectedIndexes([++this.state.lastSelectedIndex]);
                 }
                 else if (this.state.selectedIndexes.length === 0 && this.state.listings.length > 0) {
                     // Select first listing
@@ -669,6 +677,9 @@ class App extends Component {
     }
 
     multiSelectListings(e, targetIdx) {
+        // Clean input
+        targetIdx = parseInt(targetIdx, 10);
+
         // Multiselect?
         if (e.shiftKey) {
             // Make sure we have selected something first
@@ -777,8 +788,13 @@ class App extends Component {
             return idxs.indexOf(item) == pos;
         })
 
+        // No idx provided?
+        if (lastSelectedIdx == undefined) {
+            lastSelectedIdx = (idxs.length === 0) ? -1 : idxs[0];
+        }
+
         // Update state with new selected index
-        this.setState({ selectedIndexes: idxs, lastSelectedIndex: lastSelectedIdx || idxs[0] || -1 });
+        this.setState({ selectedIndexes: idxs, lastSelectedIndex: lastSelectedIdx });
     }
 
     enterOrDownloadSelection() {
