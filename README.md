@@ -42,6 +42,7 @@ Pixelmate is designed to look and feel like the native OS X Finder for a familia
 * `Cmd + ↑` to navigate out of a folder
 * `Cmd + Delete` to delete a file or folder
 * `Cmd + Shift + ↑/↓` to multi-select listings
+* `Cmd + Shift + A` to see a list of all storage devices
 
 **On 
 **
@@ -50,6 +51,7 @@ Pixelmate is designed to look and feel like the native OS X Finder for a familia
 * `Ctrl + ↑` to navigate out of a folder
 * `Ctrl + Del` to delete a file or folder
 * `Ctrl + Shift + ↑/↓` to multi-select listings
+* `Ctrl + Shift + A` to see a list of all storage devices
 
 ## To Do
 

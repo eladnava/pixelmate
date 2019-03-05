@@ -17,7 +17,7 @@ app.on('ready', function createWindow() {
             submenu: [
                 {
                     label: 'All Storage Devices',
-                    accelerator: 'CmdOrCtrl+A',
+                    accelerator: 'CmdOrCtrl+Shift+A',
                     click() {
                         win.webContents.send('allStorageDevices');
                     }
