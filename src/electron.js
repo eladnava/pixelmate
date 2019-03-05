@@ -1,6 +1,6 @@
 const url = require('url');
 const path = require('path');
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, shell } = require('electron');
 
 // Keep a global reference of the window object
 let win;
@@ -10,10 +10,10 @@ app.on('ready', function createWindow() {
     // Create the main browser window
     win = new BrowserWindow({ width: 780, height: 585, title: 'Pixelmate', icon: __dirname + '/img/1.ico' });
 
-    // Electron OS X menu bar items
+    // Electron menu bar items
     const template = [
         {
-            label: 'Pixelmate',
+            label: app.getName(),
             submenu: [
                 {
                     label: 'All Storage Devices',
@@ -22,9 +22,70 @@ app.on('ready', function createWindow() {
                         win.webContents.send('allStorageDevices');
                     }
                 },
+                { type: 'separator' },
+                { label: 'Quit', role: 'quit' }
+            ]
+        },
+        {
+            label: 'Edit',
+            submenu: [
+                { role: 'undo' },
+                { role: 'redo' },
+                { type: 'separator' },
+                { role: 'cut' },
+                { role: 'copy' },
+                { role: 'paste' },
+                { role: 'pasteandmatchstyle' },
+                { role: 'delete' },
+                { role: 'selectall' },
+                { type: 'separator' },
                 {
-                    label: 'Quit',
-                    role: 'quit'
+                    label: 'Speech',
+                    submenu: [
+                        { role: 'startspeaking' },
+                        { role: 'stopspeaking' }
+                    ]
+                }
+            ]
+        },
+        {
+            label: 'View',
+            submenu: [
+                { role: 'reload' },
+                { role: 'forcereload' },
+                { role: 'toggledevtools' },
+                { type: 'separator' },
+                { role: 'resetzoom' },
+                { role: 'zoomin' },
+                { role: 'zoomout' },
+                { type: 'separator' },
+                { role: 'togglefullscreen' }
+            ]
+        },
+        {
+            role: 'window',
+            submenu: [
+                { role: 'close' },
+                { role: 'minimize' },
+                { role: 'zoom' },
+                { type: 'separator' },
+                { role: 'front' },
+                { role: 'hide' },
+                { role: 'hideothers' },
+                { role: 'unhide' },
+                { type: 'separator' },
+            ]
+        },
+        {
+            role: 'help',
+            submenu: [
+                {
+                    label: 'GitHub Project',
+                    click() { shell.openExternal('https://github.com/eladnava/pixelmate') }
+                },
+                {
+                    label: 'Report an Issue',
+                    click() { shell.openExternal('https://github.com/eladnava/pixelmate/issues/new') }
                 }
             ]
         }
