@@ -160,6 +160,15 @@ class App extends Component {
                     this.stopEditing();
                 }
             }
+            
+            // Command + A?
+            if (e.metaKey && e.keyCode === 'A'.charCodeAt(0)) {
+                // Editing mode?
+                if (this.isEditing()) {
+                    // Select all text
+                    this.getEditedListing().input.select();
+                }
+            }
 
             // Ignore the following hotkeys if currently editing
             if (this.isEditing()) {
