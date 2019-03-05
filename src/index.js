@@ -390,6 +390,23 @@ class App extends Component {
     async deleteSelectedListings() {
         // Valid selection(s)?
         if (this.isMultiSelectionValid()) {
+            // Multiple listings?
+            if (this.state.selectedIndexes.length > 1) {
+                // Confirm multiple item deletion
+                if (!window.confirm(`Are you sure you want to delete ${this.state.selectedIndexes.length} items?`)) {
+                    return;
+                }
+            }
+            else {
+                // Build remote path to single listing
+                let listingPath = `/${this.state.path.join('/')}/${this.state.listings[this.state.selectedIndexes[0]].name}`;
+
+                // Confirm single item deletion
+                if (!window.confirm(`Are you sure you want to delete:\n${listingPath}`)) {
+                    return;
+                }
+            }
+
             // Traverse selection(s)
             for (let idx of this.state.selectedIndexes) {
                 // Get selected listing
@@ -402,11 +419,6 @@ class App extends Component {
                 if (listing.folder) {
                     // Append trailing slash
                     listingPath += '/';
-                }
-
-                // Confirm with user
-                if (!window.confirm(`Are you sure you want to delete:\n${listingPath}`)) {
-                    return;
                 }
 
                 try {
