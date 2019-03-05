@@ -54,6 +54,34 @@ Pixelmate is designed to look and feel like the native OS X Finder for a familia
 * `Ctrl + Shift + ↑/↓` to multi-select listings
 * `Ctrl + Shift + A` to see a list of all storage devices
 
+## Developing Locally
+
+1. Clone the repository:
+
+```
+git clone https://github.com/eladnava/pixelmate.git
+```
+2. Install dependencies:
+
+```
+cd pixelmate
+npm install
+```
+
+3. Run the dev server:
+
+```
+npm run server
+```
+
+4. Run the Electron OS X app
+
+```
+npm run darwin
+```
+
+5. Make changes and enjoy live-reloading goodness :)
+
 ## To Do
 
 - [x] File/folder multi-selection for multi-delete and multi-download
