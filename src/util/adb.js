@@ -23,7 +23,7 @@ export default {
         }
 
         // Pull remote file/folder to local path
-        await this.execShellCommand(pathToAdb(), ['pull', remotePath, localPath], outputListener);
+        await this.execShellCommand(pathToAdb(), ['pull', this.escape(remotePath), this.escape(localPath)], outputListener);
     },
 
     async push(localPath, remotePath, outputListener) {
@@ -31,7 +31,7 @@ export default {
         await this.getDevice();
 
         // Make sure remote file/folder doesn't exist
-        let output = await this.execShellCommand(pathToAdb(), ['shell', 'ls', `'${remotePath}'`]);
+        let output = await this.execShellCommand(pathToAdb(), ['shell', 'ls', this.escape(remotePath)]);
 
         // Look for the 'no such file' error
         if (!output.includes('No such file')) {
@@ -39,7 +39,7 @@ export default {
         }
 
         // Push local file/folder to remote path
-        await this.execShellCommand(pathToAdb(), ['push', localPath, remotePath], outputListener);
+        await this.execShellCommand(pathToAdb(), ['push', this.escape(localPath), this.escape(remotePath)], outputListener);
     },
 
     async mv(originalPath, newPath, outputListener) {
@@ -47,7 +47,17 @@ export default {
         await this.getDevice();
 
         // Move the file/folder or rename it
-        await this.execShellCommand(pathToAdb(), ['shell', 'mv', `'${originalPath}'`, `'${newPath}'`], outputListener, true);
+        await this.execShellCommand(pathToAdb(), ['shell', 'mv', this.escape(originalPath), this.escape(newPath)], outputListener, true);
+    },
+
+    escape(path) {
+        // Escape single quotes, double quotes, and spaces
+        path = path.replace(/"/g, '\\"');
+        path = path.replace(/ /g, '\\ ');
+        path = path.replace(/'/g, '\\\'');
+
+        // Return path
+        return path;
     },
 
     async mkdir(remotePath, outputListener) {
@@ -55,7 +65,7 @@ export default {
         await this.getDevice();
 
         // Create new folder
-        await this.execShellCommand(pathToAdb(), ['shell', 'mkdir', `'${remotePath}'`], outputListener, true);
+        await this.execShellCommand(pathToAdb(), ['shell', 'mkdir', this.escape(remotePath)], outputListener, true);
     },
 
     async rm(remotePath, outputListener) {
@@ -63,15 +73,15 @@ export default {
         await this.getDevice();
 
         // Create new folder
-        await this.execShellCommand(pathToAdb(), ['shell', 'rm', '-rf', `'${remotePath}'`], outputListener, true);
+        await this.execShellCommand(pathToAdb(), ['shell', 'rm', '-rf', this.escape(remotePath)], outputListener, true);
     },
 
     async du(remotePath, outputListener) {
         // Validate adb device connectivity
         await this.getDevice();
 
-        // Create new folder
-        let output = await this.execShellCommand(pathToAdb(), ['shell', 'du', '-s', `'${remotePath}'`]);
+        // Execute du command
+        let output = await this.execShellCommand(pathToAdb(), ['shell', 'du', '-s', this.escape(remotePath)]);
 
         // Parse output
         let parse = /(.+?)\t/g.exec(output);
