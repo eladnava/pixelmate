@@ -313,6 +313,13 @@ class App extends Component {
                 }
             }
 
+            // Command + A?
+            if (e.metaKey && e.keyCode === 'A'.charCodeAt(0)) {
+                // Select all listings
+                this.setSelectedIndexes([...this.state.listings.keys()]);
+                return;
+            }
+
             // Traverse listings
             for (let idx in this.state.listings) {
                 // Get current listing
