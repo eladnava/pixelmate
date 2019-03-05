@@ -23,7 +23,7 @@ export default {
         }
 
         // Pull remote file/folder to local path
-        await this.execShellCommand(pathToAdb(), ['pull', this.escape(remotePath), this.escape(localPath)], outputListener);
+        await this.execShellCommand(pathToAdb(), ['pull', remotePath, localPath], outputListener);
     },
 
     async push(localPath, remotePath, outputListener) {
@@ -39,7 +39,7 @@ export default {
         }
 
         // Push local file/folder to remote path
-        await this.execShellCommand(pathToAdb(), ['push', this.escape(localPath), this.escape(remotePath)], outputListener);
+        await this.execShellCommand(pathToAdb(), ['push', localPath, remotePath], outputListener);
     },
 
     async mv(originalPath, newPath, outputListener) {
