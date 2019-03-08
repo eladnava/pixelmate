@@ -55,6 +55,8 @@ export default {
         path = path.replace(/"/g, '\\"');
         path = path.replace(/ /g, '\\ ');
         path = path.replace(/'/g, '\\\'');
+        path = path.replace(/\(/g, '\\(');
+        path = path.replace(/\)/g, '\\)');
 
         // Return path
         return path;
@@ -158,6 +160,11 @@ export default {
 
         // Return first device (ignore others)
         return devices[0];
+    },
+
+    async notifyMediaUpdated(path) {
+        // Execute adb command
+        await this.execShellCommand(pathToAdb(), ['shell', 'am', 'broadcast', '-a', 'android.intent.action.MEDIA_SCANNER_SCAN_FILE', '-d', 'file://' + this.escape(path)]);
     },
 
     execShellCommand(binary, args, outputListener, outputMeansError) {

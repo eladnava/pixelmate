@@ -113,6 +113,12 @@ class App extends Component {
                 try {
                     // Push item via adb
                     await adb.push(localPath, remotePath, this.onCommandOutput.bind(this));
+                    
+                    // Is this a media file?
+                    if (this.isMediaFile(itemName)) {
+                        // Notify media added
+                        await adb.notifyMediaUpdated(remotePath);
+                    }
                 }
                 catch (err) {
                     // Display error
@@ -360,6 +366,11 @@ class App extends Component {
         this.setState({ listings: this.state.listings });
     }
 
+    isMediaFile(name) {
+        // Basic media extension check
+        return name.match( /(\.mp3|\.mp4|\.aac|\.avi|\.mov|\.mkv|\.avc)/ );
+    }
+
     isSingleSelectionValid() {
         // Check whether selection is a valid element in the listings array
         return this.state.selectedIndexes.length === 1 && this.state.selectedIndexes[0] < this.state.listings.length;
@@ -431,6 +442,12 @@ class App extends Component {
                 try {
                     // Attempt to delete the listing
                     await adb.rm(listingPath, this.onCommandOutput.bind(this));
+
+                    // Is this a media file?
+                    if (this.isMediaFile(listingPath)) {
+                        // Notify media deleted
+                        await adb.notifyMediaUpdated(listingPath);
+                    }
                 }
                 catch (err) {
                     // Display error
@@ -634,8 +651,19 @@ class App extends Component {
             }
         }
 
+        // Prepare full paths (old and new name)
+        let oldPath = `/${this.state.path.join('/')}/${listing.name}`;
+        let newPath = `/${this.state.path.join('/')}/${newName}`;
+
         // Attempt to rename the listing
-        await adb.mv(`/${this.state.path.join('/')}/${listing.name}`, `/${this.state.path.join('/')}/${newName}`, this.onCommandOutput.bind(this));
+        await adb.mv(oldPath, newPath, this.onCommandOutput.bind(this));
+
+         // Is this a media file?
+         if (this.isMediaFile(newName)) {
+            // Notify media renamed
+            await adb.notifyMediaUpdated(oldPath);
+            await adb.notifyMediaUpdated(newPath);
+        }
 
         // Update name
         listing.name = newName;
