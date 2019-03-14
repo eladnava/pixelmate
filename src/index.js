@@ -98,11 +98,6 @@ class App extends Component {
                 // Get item name from split path
                 let itemName = splitPath[splitPath.length - 1];
 
-                // If no item type specified, the item is a folder
-                if (!item.type) {
-                    itemName += '/';
-                }
-
                 // Build local and remote paths
                 let localPath = item.path;
                 let remotePath = `/${this.state.path.join('/')}/${itemName}`;
