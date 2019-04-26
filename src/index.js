@@ -16,6 +16,7 @@ const ipcRenderer = electron.ipcRenderer;
 const shell = electron.shell;
 const { remote } = electron;
 const { app, Menu, MenuItem } = remote;
+const fs = remote.require('fs');
 
 class App extends Component {
     constructor(props) {
@@ -531,7 +532,16 @@ class App extends Component {
                 let remotePath = `/${this.state.path.join('/')}/${listing.name}`;
 
                 // Build target download local path
-                let localPath = `${app.getPath('downloads')}/Pixelmate/${this.state.sessionId}/${listing.name}`;
+                let localPath = `${app.getPath('downloads')}/Pixelmate/${this.state.sessionId}/`;
+
+                // Make sure session folder exists
+                if (!fs.existsSync(localPath)) {
+                    // Attempt to create session folder
+                    fs.mkdirSync(localPath);
+                }
+
+                // Add listing name
+                localPath += listing.name;
 
                 // If listing is a folder, append a trailing slash
                 if (listing.folder) {

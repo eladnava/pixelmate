@@ -195,7 +195,7 @@ export default {
             // Process exit listener
             process.on('exit', function (code) {
                 // Check exit code for success or failure
-                if (code === 0) {
+                if (code === 1 || code === 0) {
                     // Output means error?
                     if (output && outputMeansError) {
                         reject(new Error(`The operation failed:\n${output}`));
