@@ -8,7 +8,7 @@ let win;
 // Called when Electron has finished initialization
 app.on('ready', function createWindow() {
     // Create the main browser window
-    win = new BrowserWindow({ width: 780, height: 585, title: 'Pixelmate', icon: __dirname + '/img/1.ico' });
+    win = new BrowserWindow({ width: 780, height: 585, title: 'Pixelmate', icon: __dirname + '/img/1.ico', webPreferences: { nodeIntegration: true } });
 
     // Electron menu bar items
     const template = [
