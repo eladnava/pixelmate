@@ -19,6 +19,6 @@ export default {
         let gb = (mb / 1000).toFixed(2);
 
         // Return size in GB
-        return gb + ' GB';
+        return '<b>' + gb + ' GB</b>';
     }
 }

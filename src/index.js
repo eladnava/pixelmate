@@ -532,7 +532,16 @@ class App extends Component {
                 let remotePath = `/${this.state.path.join('/')}/${listing.name}`;
 
                 // Build target download local path
-                let localPath = `${app.getPath('downloads')}/Pixelmate/${this.state.sessionId}/`;
+                let localPath = `${app.getPath('downloads')}/Pixelmate/`;
+
+                // Make sure parent Pixelmate folder exists
+                if (!fs.existsSync(localPath)) {
+                    // Attempt to create session folder
+                    fs.mkdirSync(localPath);
+                }
+                
+                // Add session folder path
+                localPath += `${this.state.sessionId}/`;
 
                 // Make sure session folder exists
                 if (!fs.existsSync(localPath)) {
@@ -821,7 +830,7 @@ class App extends Component {
                         {listing.date}
                     </td>
                     <td className="faded right">
-                        {listing.size > 0 ? human.getReadableListingSize(listing.size) : '--'}
+                        <div dangerouslySetInnerHTML={{__html: listing.size > 0 ? human.getReadableListingSize(listing.size) : '--'}}></div>
                     </td>
                 </tr>
             );
