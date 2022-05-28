@@ -111,7 +111,7 @@ class App extends Component {
                     await adb.push(localPath, remotePath, this.onCommandOutput.bind(this));
                     
                     // Is this a media file?
-                    if (this.isMediaFile(itemName)) {
+                    if (this.isMediaFile(remotePath)) {
                         // Notify media added
                         await adb.notifyMediaUpdated(remotePath);
                     }
@@ -364,7 +364,7 @@ class App extends Component {
 
     isMediaFile(name) {
         // Basic media extension check
-        return name.match( /(\.mp3|\.mp4|\.aac|\.avi|\.mov|\.mkv|\.avc)/ );
+        return name.match( /(\.mp3|\.mp4|\.aac|\.avi|\.mov|\.mkv|\.avc|Pictures|DCIM|Music|Movies)/);
     }
 
     isSingleSelectionValid() {
