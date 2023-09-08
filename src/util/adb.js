@@ -114,6 +114,7 @@ export default {
                 name: listing.name,
                 folder: !listing.isFile(),
                 size: listing.isDirectory() ? 0 : Math.round(listing.size / 1000),
+                mtime: listing.mtime,
                 date: moment(listing.mtime).format('MMM DD, YYYY, hh:MM A')
             };
         });

@@ -65,6 +65,7 @@ class App extends Component {
         // Add generic context menu actions
         contextMenuNoSelection.append(new MenuItem({ label: 'Refresh', click: this.reloadListings.bind(this) }));
         contextMenuNoSelection.append(new MenuItem({ type: 'separator' }));
+        contextMenuNoSelection.append(new MenuItem({ label: 'Sort by Date', click: this.sortByDate.bind(this) }));
         contextMenuNoSelection.append(new MenuItem({ label: 'Calculate Sizes', click: this.getAllFolderSizes.bind(this) }));
 
         // Listen for context menu event
@@ -489,6 +490,27 @@ class App extends Component {
 
         // Update status message and listings list
         this.setState({ status: 'Done', listings: this.state.listings });
+    }
+
+    async sortByDate() {
+        // Sort listings by date modified
+        this.state.listings.sort(function (a, b) {
+            // Current listing is a folder?
+            if (a.folder && !b.folder) {
+                return -1;
+            }
+
+            // Comparison is a folder?
+            if (b.folder && !a.folder) {
+                return 1;
+            }
+
+            // Sort listings by modified time ASC
+            return a.mtime.getTime() - b.mtime.getTime();
+        });
+
+        // Update listings list
+        this.setState({ listings: this.state.listings });
     }
 
     async getSelectedListingsSizes() {
