@@ -422,6 +422,12 @@ class App extends Component {
                 }
             }
 
+            // Update status message
+            this.setState({ status: 'Deleting...', });
+
+            // Deleted counter
+            var deletedCount = 0;
+
             // Traverse selection(s)
             for (let idx of this.state.selectedIndexes) {
                 // Get selected listing
@@ -445,6 +451,12 @@ class App extends Component {
                         // Notify media deleted
                         await adb.notifyMediaUpdated(listingPath);
                     }
+
+                    // Increment counter
+                    deletedCount++;
+
+                    // Update status message
+                    this.setState({ status: `Deleted (${deletedCount}/${this.state.selectedIndexes.length})...`, });
                 }
                 catch (err) {
                     // Display error
