@@ -70,12 +70,12 @@ export default {
         await this.execShellCommand(pathToAdb(), ['shell', 'mkdir', this.escape(remotePath)], outputListener, true);
     },
 
-    async rm(remotePath, outputListener) {
+    async rm(remoteFiles, outputListener) {
         // Validate adb device connectivity
         await this.getDevice();
 
         // Create new folder
-        await this.execShellCommand(pathToAdb(), ['shell', 'rm', '-rf', this.escape(remotePath)], outputListener, true);
+        await this.execShellCommand(pathToAdb(), ['shell', 'rm', '-rf', ...remoteFiles], outputListener, true);
     },
 
     async du(remotePath, outputListener) {

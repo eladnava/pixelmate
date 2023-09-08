@@ -436,6 +436,9 @@ class App extends Component {
             // Deleted counter
             var deletedCount = 0;
 
+            // Array of listings to delete
+            var listings = [];
+
             // Traverse selection(s)
             for (let idx of this.state.selectedIndexes) {
                 // Get selected listing
@@ -450,18 +453,47 @@ class App extends Component {
                     listingPath += '/';
                 }
 
+                // Escape path
+                listing.path = adb.escape(listingPath); 
+
+                // Add listing object
+                listings.push(listing);
+            }
+
+              // Max files per delete operation (100)
+              var batchLimit = 100;
+
+              // Batches will be added to this array
+              var listingBatches = [];
+  
+              // Traverse listings and split them up into batches
+              for (var start = 0; start < this.state.selectedIndexes.length; start += batchLimit) {
+                  // Get next listings batch up to limit
+                  var slicedListings = listings.slice(start, start + batchLimit);
+  
+                  // Add to batches array
+                  listingBatches.push(slicedListings);
+              }
+
+              // Traverse batches
+              for (var batch of listingBatches) {
+                // Get array of paths
+                var paths = batch.map(function (listing) {
+                    return listing.path;
+                });
+                
                 try {
                     // Attempt to delete the listing
-                    await adb.rm(listingPath, this.onCommandOutput.bind(this));
+                    await adb.rm(paths, this.onCommandOutput.bind(this));
 
                     // Is this a media file?
-                    if (this.isMediaFile(listingPath)) {
-                        // Notify media deleted
-                        await adb.notifyMediaUpdated(listingPath);
-                    }
+                    // if (this.isMediaFile(listingPath)) {
+                    //     // Notify media deleted
+                    //     await adb.notifyMediaUpdated(listingPath);
+                    // }
 
                     // Increment counter
-                    deletedCount++;
+                    deletedCount += batch.length;
 
                     // Update status message
                     this.setState({ status: `Deleted (${deletedCount}/${this.state.selectedIndexes.length})...`, });
@@ -471,8 +503,10 @@ class App extends Component {
                     return alert(err.message);
                 }
 
-                // Mark as deleted
-                listing.deleted = true;
+                // Mark listings as deleted
+                for (var listing of batch) {
+                    listing.deleted = true;
+                }
             }
 
             // Traverse selection(s) to remove deleted ones
