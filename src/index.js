@@ -66,6 +66,8 @@ class App extends Component {
         contextMenuNoSelection.append(new MenuItem({ label: 'Refresh', click: this.reloadListings.bind(this) }));
         contextMenuNoSelection.append(new MenuItem({ type: 'separator' }));
         contextMenuNoSelection.append(new MenuItem({ label: 'Sort by Date', click: this.sortByDate.bind(this) }));
+        contextMenuNoSelection.append(new MenuItem({ label: 'Sort by Size', click: this.sortBySize.bind(this) }));
+        contextMenuNoSelection.append(new MenuItem({ type: 'separator' }));
         contextMenuNoSelection.append(new MenuItem({ label: 'Calculate Sizes', click: this.getAllFolderSizes.bind(this) }));
 
         // Listen for context menu event
@@ -519,6 +521,27 @@ class App extends Component {
 
             // Sort listings by modified time ASC
             return a.mtime.getTime() - b.mtime.getTime();
+        });
+
+        // Update listings list
+        this.setState({ listings: this.state.listings });
+    }
+
+    async sortBySize() {
+        // Sort listings by file size
+        this.state.listings.sort(function (a, b) {
+            // Current listing is a folder?
+            if (a.folder && !b.folder) {
+                return -1;
+            }
+
+            // Comparison is a folder?
+            if (b.folder && !a.folder) {
+                return 1;
+            }
+
+            // Sort listings by file size DESC
+            return b.size - a.size;
         });
 
         // Update listings list
