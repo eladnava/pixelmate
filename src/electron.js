@@ -13,7 +13,7 @@ app.on('ready', function createWindow() {
     // Electron menu bar items
     const template = [
         {
-            label: app.getName(),
+            label: app.name,
             submenu: [
                 {
                     label: 'All Storage Devices',
