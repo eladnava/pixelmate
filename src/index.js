@@ -654,13 +654,16 @@ class App extends Component {
                 // Update status message
                 this.setState({ status: `Downloading ${remotePath}` });
 
-                try {
-                    // Pull the listing
-                    await adb.pull(remotePath, localPath, this.onCommandOutput.bind(this));
-                }
-                catch (err) {
-                    // Display error
-                    return alert(err.message);
+                // File doesn't exist locally?
+                if (!fs.existsSync(localPath)) {
+                    try {
+                        // Pull the listing
+                        await adb.pull(remotePath, localPath, this.onCommandOutput.bind(this));
+                    }
+                    catch (err) {
+                        // Display error
+                        return alert(err.message);
+                    }
                 }
 
                 // Open the listing after downloading?
