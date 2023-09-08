@@ -1,6 +1,6 @@
 const url = require('url');
 const path = require('path');
-const { app, BrowserWindow, Menu, shell } = require('electron');
+const { app, dialog, BrowserWindow, Menu, ipcMain, shell } = require('electron');
 
 // Keep a global reference of the window object
 let win;
@@ -112,6 +112,17 @@ app.on('ready', function createWindow() {
         // Dereference the window object for gc
         win = null;
     });
+
+    // Wait for 'selectFolder' event
+    ipcMain.on('selectFolder', async () => {
+        // Show folder selection dialog
+        const result = await dialog.showOpenDialog(win, {
+          properties: ['openDirectory']
+        })
+
+        // Return result to ipcRenderer
+        win.webContents.send('folderSelected', result.filePaths);
+      });
 });
 
 // Quit when all windows are closed

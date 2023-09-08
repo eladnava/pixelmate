@@ -39,6 +39,12 @@ class App extends Component {
             // Reload listings
             this.reloadListings();
         })
+
+        // Listen for 'folderSelected' event from IPC main
+        ipcRenderer.on('folderSelected', async (event, path) => {
+            // Download listings to custom path
+            await this.downloadSelectedListings({}, path + '/');
+        });
     }
 
     componentDidUpdate() {
@@ -55,7 +61,7 @@ class App extends Component {
 
         // Add listing context menus
         contextMenu.append(new MenuItem({ label: 'Get Size', click: this.getSelectedListingsSizes.bind(this) }));
-        contextMenu.append(new MenuItem({ label: 'Download', click: this.downloadSelectedListings.bind(this) }));
+        contextMenu.append(new MenuItem({ label: 'Download', click: this.selectDownloadPath.bind(this) }));
         contextMenu.append(new MenuItem({ type: 'separator' }));
         contextMenu.append(new MenuItem({ label: 'Delete', click: this.deleteSelectedListings.bind(this) }));
 
@@ -577,7 +583,7 @@ class App extends Component {
         }
     }
 
-    async downloadSelectedListings(options) {
+    async downloadSelectedListings(options, customLocalPath) {
         // Valid selection(s)?
         if (this.isMultiSelectionValid()) {
             // Traverse selection(s)
@@ -589,16 +595,13 @@ class App extends Component {
                 let remotePath = `/${this.state.path.join('/')}/${listing.name}`;
 
                 // Build target download local path
-                let localPath = `${app.getPath('downloads')}/Pixelmate/`;
+                let localPath = customLocalPath || `${app.getPath('downloads')}/Pixelmate/${this.state.sessionId}/`;
 
                 // Make sure parent Pixelmate folder exists
                 if (!fs.existsSync(localPath)) {
                     // Attempt to create session folder
                     fs.mkdirSync(localPath);
                 }
-                
-                // Add session folder path
-                localPath += `${this.state.sessionId}/`;
 
                 // Make sure session folder exists
                 if (!fs.existsSync(localPath)) {
@@ -637,6 +640,11 @@ class App extends Component {
                 }
             }
         }
+    }
+
+    async selectDownloadPath(options) {
+        // Ask user to choose download path
+        ipcRenderer.send('selectFolder');
     }
 
     onCommandOutput(output) {
