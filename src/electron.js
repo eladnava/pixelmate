@@ -121,7 +121,7 @@ app.on('ready', function createWindow() {
         })
 
         // Return result to ipcRenderer
-        win.webContents.send('folderSelected', result.filePaths);
+        win.webContents.send('folderSelected', result.filePaths || result);
       });
 });
 
