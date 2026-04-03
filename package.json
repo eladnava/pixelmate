@@ -23,7 +23,7 @@
     "package": "rm -rf dist/* build/* && npm run build && electron-packager . Pixelmate --platform=darwin --arch=arm64 --icon=public/app.icns --app-version=1.0.7 --build-version=1.0.7 --app-bundle-id=com.pixelmate --osx-sign --overwrite && zip -r -y -X dist/Pixelmate.zip Pixelmate-darwin-arm64/Pixelmate.app"
   },
   "devDependencies": {
-    "electron": "^11.0.5",
+    "electron": "^39.8.4",
     "electron-packager": "^17.1.2",
     "react-scripts": "5.0.1"
   }
